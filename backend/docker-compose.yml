@@ -1,0 +1,30 @@
+
+services:
+    db:
+        image: mongo:latest
+        container_name: db
+        restart: always
+        env_file:
+            - .env
+        ports:
+            - '${DB_PORT}:27017'
+        volumes:
+            - /data/db
+        environment:
+            MONGO_INITDB_USERNAME: ${DB_USERNAME}
+            MONGO_INITDB_PASSWORD: ${DB_PASSWORD}
+            MONGO_INITDB_DATABASE: ${DB_DATABASE}
+    web:
+        container_name: web
+        build: .
+        restart: always
+        env_file:
+            - .env
+        volumes:
+            - .:/usr/src/app
+            - /usr/src/app/node_modules
+        links:
+            - db
+        ports:
+            - 5000:5000
+        command: npm run start
